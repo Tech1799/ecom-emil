@@ -6,7 +6,7 @@ import validationMiddleware from "@middlewares/validation.middleware";
 import validate from "@resources/user/user.validation";
 import HttpException from "@utils/exceptions/http.exception";
 import authMiddleware from "@middlewares/auth.middleware";
-// import userModel from "@resources/user/user.model";
+import userModel from "@resources/user/user.model";
 
 class userController implements Controller {
   public path = "/user";
@@ -67,8 +67,11 @@ class userController implements Controller {
     try {
       updates.forEach((update) => (req.user[update] = req.body[update]));
       await req.user.save();
-      // await userModel.findByIdAndUpdate(req.user.id, req.body);
-      res.send(req.user);
+      const updatedUser = await userModel.findByIdAndUpdate(
+        req.user.id,
+        req.body
+      );
+      res.status(200).json(updatedUser);
     } catch (e) {
       res.status(400).send(e);
     }
